@@ -7,7 +7,7 @@ const ParameterInput = () => {
                 <legend>Parámetros</legend>
                 <div className="mui-text-field">
                     <input type="text" placeholder="muertes, edad, etc" />
-                </div>
+                </div><br />
                 <button type="submit" className="mui-btn mui-btn--raised mui-btn--primary">Buscar</button>
             </form>
         </div>
