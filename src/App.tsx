@@ -1,24 +1,36 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import AppBar from "./Components/AppBar";
+import FilesButton from "./Components/FilesButton";
+import ParameterInput from "./Components/ParameterInput";
+import Charts from "./Components/Charts";
+import Reports from "./Components/Reports";
+import Footer from "./Components/Footer";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <AppBar /><br/>
+        <div className="mui-container-fluid">
+            <div className="mui-row">
+                <div className="mui-col-md-6">
+                    <FilesButton />
+                </div>
+                <div className="mui-col-md-6">
+                    <ParameterInput />
+                </div>
+            </div>
+
+            <div className="mui-row">
+                <div className="mui-col-md-6">
+                    <Charts />
+                </div>
+                <div className="mui-col-md-6">
+                    <Reports />
+                </div>
+            </div>
+        </div><br/>
+        <Footer />
     </div>
   );
 }
