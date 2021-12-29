@@ -6,6 +6,7 @@ import ParameterInput from "./Components/ParameterInput";
 import Charts from "./Components/Charts";
 import Reports from "./Components/Reports";
 import Footer from "./Components/Footer";
+import Predictions from "./Components/Predictions";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
                     <FilesButton />
                 </div>
                 <div className="mui-col-md-6">
-                    <ParameterInput />
+                    <Predictions />
                 </div>
             </div>
 

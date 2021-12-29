@@ -14,7 +14,10 @@ const FilesButton = () => {
             body: formData
         });
         const content = await res.json();
-        console.log(content)
+
+        if ( content === 200 ) {
+            alert("Cargado Correctamente");
+        }
     }
 
     return (
