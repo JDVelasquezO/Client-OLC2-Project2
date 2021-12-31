@@ -11,7 +11,7 @@ const Predictions = () => {
                 <legend>Tipo de Predicción</legend>
                 <div className="mui-select">
                     <select>
-                        <option disabled>Escoge una</option>
+                        <option selected disabled>Escoge una</option>
                         {
                             prediction.map(o => {
                                 return (
@@ -22,7 +22,7 @@ const Predictions = () => {
                     </select>
                     <label>Categorías</label>
                 </div>
-                <button type="submit" className="mui-btn mui-btn--raised mui-btn--primary">Buscar</button>
+                <button type="button" className="mui-btn mui-btn--raised mui-btn--primary">Seleccionar</button>
             </form>
         </div>
     );

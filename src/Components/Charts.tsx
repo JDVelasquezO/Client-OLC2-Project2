@@ -32,10 +32,7 @@ export const data = {
     datasets: [
         {
             label: 'A dataset',
-            data: Array.from({ length: 100 }, () => ({
-                x: faker.datatype.number({ min: -100, max: 100 }),
-                y: faker.datatype.number({ min: -100, max: 100 }),
-            })),
+            data: [{ x: 10, y: 20 }, { x: 25, y: 18 } ],
             backgroundColor: 'rgba(255, 99, 132, 1)',
         },
     ],

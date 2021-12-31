@@ -13,6 +13,7 @@ function App() {
     <div className="App">
       <AppBar /><br/>
         <div className="mui-container-fluid">
+            <div className="mui--text-display1">Data Science Analyzer</div><br />
             <div className="mui-row">
                 <div className="mui-col-md-6">
                     <FilesButton />
@@ -24,10 +25,7 @@ function App() {
 
             <div className="mui-row">
                 <div className="mui-col-md-6">
-                    <Charts />
-                </div>
-                <div className="mui-col-md-6">
-                    <Reports />
+                    <ParameterInput />
                 </div>
             </div>
         </div><br/>
