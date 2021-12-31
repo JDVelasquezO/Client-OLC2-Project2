@@ -1,26 +1,33 @@
 import React, {SyntheticEvent, useState} from 'react';
 import {
     Chart as ChartJS,
+    CategoryScale,
     LinearScale,
     PointElement,
     LineElement,
     Tooltip,
     Legend,
+    Title
 } from 'chart.js';
-import {Scatter} from "react-chartjs-2";
+import {Chart} from "react-chartjs-2";
+import Predictions from "./Predictions";
 
-ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
-export const options = {
-    scales: {
-        y: {
-            beginAtZero: true,
-        },
-    },
-};
+ChartJS.register(
+    CategoryScale,
+    Title,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Tooltip,
+    Legend
+);
+
+const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
 const FilesButton = () => {
     const [ selectedFile, setSelectedFile ] = useState(null);
     const [ dataArray, setDataArray ] = useState([])
+    const [ dataPredicts, setDataPredicts ] = useState([])
 
     const handleSubmit = async (e: SyntheticEvent) => {
         e.preventDefault();
@@ -36,37 +43,56 @@ const FilesButton = () => {
             body: formData
         });
         const content = await res.json();
-        const new_arr = JSON.parse(content.replace(/'/g, '"'))
-        await setDataArray(new_arr)
+        console.log(content)
+        await setDataArray(content.vals)
+        await setDataPredicts(content.predicts)
     }
 
-    // const setNewArray = async (data: []) => {
-    //     setDataArray(data);
-    //     console.log(dataArray);
-    // }
-
     const data = {
+        labels,
         datasets: [
             {
-                label: 'A dataset',
+                type: 'scatter' as const,
+                label: 'DataSet1',
                 data: dataArray,
                 backgroundColor: 'rgba(255, 99, 132, 1)',
             },
+            {
+                type: 'line' as const,
+                label: 'Dataset 1',
+                data: dataPredicts,
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            }
         ],
     };
 
     return (
-        <div className="mui-container mui-panel">
-            <form className="mui-form" onSubmit={ handleSubmit }>
-                <legend>Cargar fuente de datos</legend><br />
-                {/* @ts-ignore */}
-                <input type="file" onChange={ e => setSelectedFile( e.target.files[0] ) }
-                /> <br />
-                <button type="submit" className="mui-btn mui-btn--raised mui-btn--primary">Cargar</button>
-            </form><br />
+        <div className="mui-container">
+            <div className="mui-row">
+                <div className="mui-col-md-6">
+                    <div className={'mui-panel'}>
+                        <form className="mui-form" onSubmit={ handleSubmit }>
+                            <legend>Cargar fuente de datos</legend><br />
+                            {/* @ts-ignore */}
+                            <input type="file" onChange={ e => setSelectedFile( e.target.files[0] ) }
+                            /> <br />
+                            <button type="submit" className="mui-btn mui-btn--raised mui-btn--primary">Cargar</button>
+                        </form><br />
+                    </div>
+                </div>
 
-            <div className={"mui-container mui-panel"}>
-                <Scatter options={options} data={data} />;
+                <div className="mui-col-md-6">
+                    <Predictions />
+                </div>
+            </div>
+
+            <div className="mui-row">
+                <div className="mui-col-md-6">
+                    <div className={"mui-container mui-panel"}>
+                        <Chart type={'scatter'} data={data} />
+                    </div>
+                </div>
             </div>
         </div>
     );
