@@ -24,8 +24,9 @@ ChartJS.register(
 
 const FilesButton = () => {
     const [ selectedFile, setSelectedFile ] = useState(null);
-    const [ dataArray, setDataArray ] = useState([])
-    const [ dataPredicts, setDataPredicts ] = useState([])
+    const [ dataArray, setDataArray ] = useState([]);
+    const [ dataPredicts, setDataPredicts ] = useState([]);
+    const [ category, setCategory ] = useState("");
     const [ param1, setParam1 ] = useState("");
     const [ param2, setParam2 ] = useState("");
     const [ param3, setParam3 ] = useState("");
@@ -33,6 +34,11 @@ const FilesButton = () => {
     const handleFile = (e: SyntheticEvent) => {
         e.preventDefault();
         alert("Cargado Correctamente");
+    }
+
+    const handleCategory = (e: SyntheticEvent) => {
+        e.preventDefault();
+        console.log(category)
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
@@ -44,6 +50,8 @@ const FilesButton = () => {
         let params = [ param1, param2, param3 ]
         let str_params = JSON.stringify(params);
         formData.append("params", String(str_params));
+
+        formData.append("report", category);
 
         const res = await fetch("http://localhost:8000/uploadfile", {
             method: 'POST',
@@ -65,7 +73,7 @@ const FilesButton = () => {
             {
                 type: 'scatter' as const,
                 label: 'DataSet1',
-                data: dataArray,
+                data: dataArray, // [ {'x':0, 'y':10}, {'x':2, 'y':20} ]
                 backgroundColor: 'rgba(255, 99, 132, 1)',
             },
             {
@@ -94,10 +102,10 @@ const FilesButton = () => {
                 </div>
 
                 <div className="mui-col-md-6 mui-panel">
-                    <form className="mui-form">
+                    <form className="mui-form" onSubmit={handleCategory}>
                         <legend>Tipo de Predicción</legend>
                         <div className="mui-select">
-                            <select>
+                            <select onChange={e => setCategory(e.target.value) }>
                                 <option selected disabled>Escoge una</option>
                                 {
                                     prediction.map(o => {
@@ -109,7 +117,7 @@ const FilesButton = () => {
                             </select>
                             <label>Categorías</label>
                         </div>
-                        <button type="button" className="mui-btn mui-btn--raised mui-btn--primary">Seleccionar</button>
+                        <button type="submit" className="mui-btn mui-btn--raised mui-btn--primary">Seleccionar</button>
                     </form>
                 </div>
             </div>
