@@ -5,12 +5,15 @@ import {
     LinearScale,
     PointElement,
     LineElement,
+    ScatterController,
     Tooltip,
     Legend,
-    Title
+    Title, ChartType
 } from 'chart.js';
 import {Chart} from "react-chartjs-2";
 import prediction from "../res/predictions";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 ChartJS.register(
     CategoryScale,
@@ -18,18 +21,20 @@ ChartJS.register(
     LinearScale,
     PointElement,
     LineElement,
+    ScatterController,
     Tooltip,
     Legend
 );
 
 const FilesButton = () => {
     const [ selectedFile, setSelectedFile ] = useState(null);
-    const [ dataArray, setDataArray ] = useState([]);
-    const [ dataPredicts, setDataPredicts ] = useState([]);
+    const [ dataArray, setDataArray ] = useState(null);
+    const [ dataPredicts, setDataPredicts ] = useState(null);
     const [ category, setCategory ] = useState("");
     const [ param1, setParam1 ] = useState("");
     const [ param2, setParam2 ] = useState("");
     const [ param3, setParam3 ] = useState("");
+    const [ param4, setParam4 ] = useState("");
 
     const handleFile = (e: SyntheticEvent) => {
         e.preventDefault();
@@ -47,13 +52,13 @@ const FilesButton = () => {
         // @ts-ignore
         formData.append("file", selectedFile, selectedFile.name );
 
-        let params = [ param1, param2, param3 ]
+        let params = [ param1, param2, param3, param4 ]
         let str_params = JSON.stringify(params);
         formData.append("params", String(str_params));
 
         formData.append("report", category);
 
-        const res = await fetch("http://localhost:8000/uploadfile", {
+        const res = await fetch("https://dry-tundra-86539.herokuapp.com/uploadfile", {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -64,20 +69,21 @@ const FilesButton = () => {
 
         const content = await res.json();
         console.log(content)
-        await setDataArray(content.vals)
-        await setDataPredicts(content.predicts)
+        let new_content = JSON.parse(content.replace(/'/g, '"'))
+        await setDataArray(new_content.vals)
+        await setDataPredicts(new_content.predicts)
     }
 
     const data = {
         datasets: [
             {
-                type: 'scatter' as const,
+                type: 'scatter' as ChartType,
                 label: 'DataSet1',
                 data: dataArray, // [ {'x':0, 'y':10}, {'x':2, 'y':20} ]
                 backgroundColor: 'rgba(255, 99, 132, 1)',
             },
             {
-                type: 'line' as const,
+                type: 'line' as ChartType,
                 label: 'Dataset 1',
                 data: dataPredicts,
                 borderColor: 'rgba(0,41,250,0.5)',
@@ -85,6 +91,38 @@ const FilesButton = () => {
             }
         ],
     };
+
+    const handleDownload = (e: SyntheticEvent) => {
+        e.preventDefault();
+        // let doc = new jsPDF('p', 'pt');
+        //
+        // doc.text('This is the first title.', 20, 20);
+        //
+        // doc.addFont('Helvetica.ttf', 'helvetica', 'normal')
+        // doc.text('Reporte 1', 30, 60)
+        // doc.text('Tendencia de la infección por Covid-19 en un Pais.', 30, 100)
+
+        // @ts-ignore
+        let input = window.document.getElementById('data_chart');
+        // @ts-ignore
+        html2canvas(input).then(canvas => {
+            const img = canvas.toDataURL('image/png');
+            const pdf = new jsPDF("p", "pt");
+            pdf.addImage(
+                img,
+                "png",
+                // @ts-ignore
+                input.offsetLeft,
+                // @ts-ignore
+                input.offsetTop,
+                // @ts-ignore
+                input.offsetWidth,
+                // @ts-ignore
+                input.offsetHeight,
+            );
+            pdf.save("chart.pdf");
+        });
+    }
 
     return (
         <div className="mui-container">
@@ -101,8 +139,8 @@ const FilesButton = () => {
                     </div>
                 </div>
 
-                <div className="mui-col-md-6 mui-panel">
-                    <form className="mui-form" onSubmit={handleCategory}>
+                <div className="mui-col-md-6">
+                    <form className="mui-form mui-panel" onSubmit={handleCategory}>
                         <legend>Tipo de Predicción</legend>
                         <div className="mui-select">
                             <select onChange={e => setCategory(e.target.value) }>
@@ -142,6 +180,11 @@ const FilesButton = () => {
                                 <input type="text" placeholder="Encabezado de Infectados"
                                        onChange={ e => setParam3(e.target.value) }/>
                             </div><br />
+
+                            <div className="mui-text-field">
+                                <input type="text" placeholder="Encabezado de Días"
+                                       onChange={ e => setParam4(e.target.value) }/>
+                            </div><br />
                             <button type="submit" className="mui-btn mui-btn--raised mui-btn--primary">Analizar</button>
                         </form>
                     </div>
@@ -149,7 +192,11 @@ const FilesButton = () => {
 
                 <div className="mui-col-md-12">
                     <div className={"mui-container mui-panel"}>
-                        <Chart type={'scatter'} data={data} />
+                        <div id={'data_chart'}>
+                            <Chart type={'scatter'} data={data} /><hr />
+                        </div>
+
+                        <button onClick={e => handleDownload(e)} type="submit" className="mui-btn mui-btn--raised mui-btn--primary">Descargar</button>
                     </div>
                 </div>
             </div>
